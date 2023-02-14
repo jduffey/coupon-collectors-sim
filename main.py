@@ -2,7 +2,6 @@ import secrets
 import sys
 import time
 import math
-import numpy as np
 
 
 def run(n):
@@ -27,9 +26,9 @@ if __name__ == '__main__':
 
     totaldays = 0
 
-    simulation_runs = 1_000_000
+    simulation_runs = 10_000
 
-    unique_coupons = 295
+    unique_coupons = 38
 
     expected_days = \
         1 + unique_coupons * sum([1 / i for i in range(1, unique_coupons)])
@@ -43,8 +42,9 @@ if __name__ == '__main__':
             delta_ev = abs(expected_days - avg_so_far)
             print(
                 str(i).rjust(1 + int(math.log(simulation_runs + 1, 10))),
+                "",
                 "{:.22f}".format(avg_so_far),
-                "{:.22f}".format(delta_ev)
+                "{:.22f}".format(delta_ev).rjust(26)
             )
 
         if days < lowest_days_to_collect_all:
