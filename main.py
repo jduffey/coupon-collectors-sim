@@ -44,7 +44,8 @@ if __name__ == '__main__':
                 str(i).rjust(1 + int(math.log(simulation_runs + 1, 10))),
                 "",
                 "{:.22f}".format(avg_so_far),
-                "{:.22f}".format(delta_ev).rjust(26)
+                "{:.22f}".format(delta_ev).rjust(26),
+                f'({lowest_days_to_collect_all}, {highest_days_to_collect_all})'
             )
 
         if days < lowest_days_to_collect_all:
