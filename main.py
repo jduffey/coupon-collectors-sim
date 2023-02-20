@@ -3,59 +3,74 @@ import sys
 import time
 import math
 
+'''
+Spin a roulette wheel until all numbers have been hit.
+An implementation of the Coupon Collector's Problem.
+'''
 
-def run(n):
-    """
-    n: number of different coupons (stamps)
-    return: days it took to achieve such goal
-    """
 
-    days = 0
+def play_until_all_numbers_hit(n):
+    spins = 0
     collected = set()
     while len(collected) < n:
         stamp_id = secrets.choice(range(0, n))
-        days += 1
+        spins += 1
         collected.add(stamp_id)
 
-    return days
+    return spins
 
 
 if __name__ == '__main__':
-    lowest_days_to_collect_all = sys.maxsize
-    highest_days_to_collect_all = -sys.maxsize - 1
+    fewest_runs_to_collect_all = sys.maxsize
+    most_runs_to_collect_all = -sys.maxsize - 1
 
-    totaldays = 0
+    total_runs = 0
 
-    simulation_runs = 10_000
+    games_to_play = 10_000
 
-    unique_coupons = 38
+    unique_elements = 38
 
-    expected_days = \
-        1 + unique_coupons * sum([1 / i for i in range(1, unique_coupons)])
+    expected_runs = \
+        1 + unique_elements * sum([1 / i for i in range(1, unique_elements)])
 
     start_time = time.time()
-    for i in range(1, simulation_runs):
-        days = run(unique_coupons)
-        totaldays += days
+    for i in range(1, games_to_play):
+        internal_runs = play_until_all_numbers_hit(unique_elements)
+        total_runs += internal_runs
         if i % 1000 == 0:
-            avg_so_far = totaldays / i
-            delta_ev = abs(expected_days - avg_so_far)
+            avg_so_far = total_runs / i
+            delta_ev = abs(expected_runs - avg_so_far)
             print(
-                str(i).rjust(1 + int(math.log(simulation_runs + 1, 10))),
+                str(i).rjust(1 + int(math.log(games_to_play + 1, 10))),
                 "",
                 "{:.22f}".format(avg_so_far),
                 "{:.22f}".format(delta_ev).rjust(26),
-                f'({lowest_days_to_collect_all}, {highest_days_to_collect_all})'
+                f'({fewest_runs_to_collect_all}, {most_runs_to_collect_all})',
+                total_runs
             )
 
-        if days < lowest_days_to_collect_all:
-            lowest_days_to_collect_all = days
+        if internal_runs < fewest_runs_to_collect_all:
+            fewest_runs_to_collect_all = internal_runs
         
-        if days > highest_days_to_collect_all:
-            highest_days_to_collect_all = days
+        if internal_runs > most_runs_to_collect_all:
+            most_runs_to_collect_all = internal_runs
 
     print("\ntime", time.time() - start_time)
-    print(simulation_runs, totaldays / simulation_runs)
-    print("lowest_days_to_collect_all", lowest_days_to_collect_all)
-    print("highest_days_to_collect_all", highest_days_to_collect_all)
-    print("expected_days", expected_days)
+    print("     Games played:", games_to_play)
+    print("       Total runs:", total_runs)
+    print("  Avg (mean) runs:", total_runs / games_to_play)
+    print("EV spins per game:", expected_runs, f'({unique_elements} unique elements)')
+    print("To collect all")
+    print("  -fewest runs:   ", fewest_runs_to_collect_all)
+    print("  -most runs:     ", most_runs_to_collect_all)
+
+    bet_amount_per_spin = 1
+    print("  Total $ wagered:", total_runs * bet_amount_per_spin)
+
+    house_edge = 0.0526
+    print("       House edge:", house_edge * 100, "%")
+    house_profit = total_runs * bet_amount_per_spin * house_edge
+    print("     House profit:", house_profit)
+
+    retroactive_rewards_per_game = house_profit / games_to_play
+    print("Retroactive rewards per game:", retroactive_rewards_per_game)
